@@ -6,6 +6,17 @@ Running regular backups (at least every 24 hours) and storing multiple copies of
 
 To use these concourse tasks you will need to have a worker in a network which has access to your ERT or/and BOSH director. You can find an example template for deploying an external worker [here](https://github.com/concourse/concourse-bosh-deployment/blob/master/cluster/external-worker.yml).
 
+## Notes
+
+If Ops Manager is not using Internal Auth, you can create a UAA client with appropriate scope as follows:
+
+```bash
+uaac target uaa.<your-domain>
+uaac token sso get
+uaac client add <backup-user> --name <backup-user> --scope=opsman.full_view --authorized_grant_types=client_credentials --authorities=opsman.full_view --access_token_validity=43200 --refresh_token_validity=43200 --secret=<backup-password> --no-interactive
+```
+If the CLIENT_ID is provided, CLIENT_ID and CLIENT_SECRET will be used to authenticate and the OPSMAN_USERNAME and OPSMAN_PASSWORD will be ignored
+
 ## Tasks
 
 ### export-om-installation
@@ -24,6 +35,8 @@ To use these concourse tasks you will need to have a worker in a network which h
 * `OPSMAN_URL`: The OpsManager URL
 * `OPSMAN_USERNAME`: The OpsManager username
 * `OPSMAN_PASSWORD`: The OpsManager password
+* `CLIENT_ID`: UAA Client ID
+* `CLIENT_SECRET`: UAA Client Secret
 
 ### bbr-backup-ert
 
@@ -44,6 +57,8 @@ N.B.: the pipeline assumes you have a tagged concourse worker deployed on the sa
 * `OPSMAN_URL`: The OpsManager URL
 * `OPSMAN_USERNAME`: The OpsManager username
 * `OPSMAN_PASSWORD`: The OpsManager password
+* `CLIENT_ID`: UAA Client ID
+* `CLIENT_SECRET`: UAA Client Secret
 
 ### bbr-backup-director
 
@@ -64,6 +79,8 @@ N.B.: the pipeline assumes you have a tagged concourse worker deployed on the sa
 * `OPSMAN_URL`: The OpsManager URL
 * `OPSMAN_USERNAME`: The OpsManager username
 * `OPSMAN_PASSWORD`: The OpsManager password
+* `CLIENT_ID`: UAA Client ID
+* `CLIENT_SECRET`: UAA Client Secret
 
 ## Example pipeline
 
